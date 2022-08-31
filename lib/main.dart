@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'forms.dart';
+import 'input_fields.dart';
 
 void main() {
   runApp(const MyApp());
@@ -59,7 +61,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
+  final TextEditingController _controller = TextEditingController.fromValue(
+      const TextEditingValue(text: "isi angka saja"));
   void _incrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -87,14 +90,41 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: GestureDetector(
-            onLongPress: _incrementCounter,
+            onTap: _incrementCounter,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                const MyImageWidget(),
+                const Text(
+                  'You have pushed the button this many times:',
+                ),
                 Text(
                   '$_counter',
                   style: Theme.of(context).textTheme.headline4,
+                ),
+                Form(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      VerificationCodeFormField(controller: _controller),
+                      Builder(
+                        builder: (BuildContext subContext) => ElevatedButton(
+                          onPressed: () {
+                            final valid = Form.of(subContext)?.validate();
+                            const bool kReleaseMode =
+                                bool.fromEnvironment('dart.vm.product');
+                            const bool kProfileMode =
+                                bool.fromEnvironment('dart.vm.profile');
+                            const bool kDebugMode =
+                                !kReleaseMode && !kProfileMode;
+                            if (kDebugMode) {
+                              print("valid: $valid");
+                            }
+                          },
+                          child: const Text("validate"),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ],
             )),
